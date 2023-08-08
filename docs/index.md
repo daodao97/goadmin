@@ -3,9 +3,9 @@
 layout: home
 
 hero:
-  name: "GoAdmin"
-  text: "后台开发, 如此简单"
-  tagline: 无需 Vue/React 等前端能力, 后端也可以开发完整的管理系统
+  name: GoAdmin
+  text: 
+  tagline: 不会前端, 也能开发完整的后台应用 
   actions:
     - theme: brand
       text: 查看文档

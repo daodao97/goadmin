@@ -15,7 +15,7 @@ export default defineConfig({
       {
         text: '介绍',
         items: [
-          { text: '系统架构', link: '/guide/design-philosophy' },
+          { text: '是什么', link: '/guide/what-is-goadmin' },
           { text: '快速开始', link: '/guide/getting-started' },
           { text: '示例', link: '/guide/example' },
         ]
