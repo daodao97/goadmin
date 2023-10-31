@@ -1,1 +1,15 @@
-## 快速开始
+### install cli
+
+```shell
+go install github.com/daodao97/goadmin/cmd/goadmin@latest
+```
+### start demo
+Test Account  username `test`, password `test`
+```shell
+goadmin start_demo
+```
+
+### help cmd
+```shell
+goadmin help
+```

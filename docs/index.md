@@ -10,10 +10,6 @@ hero:
     - theme: brand
       text: 查看文档
       link: /guide/design-philosophy
-    - theme: alt
-      text: Demo
-      link: /api-examples
-
 features:
   - title: Feature A
     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
