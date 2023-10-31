@@ -1,4 +1,4 @@
-## cli
+## install 
 
 ```shell
 go install github.com/daodao97/goadmin/cmd/goadmin@latest
