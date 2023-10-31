@@ -53,7 +53,7 @@ export default defineConfig({
     ],
 
     editLink: {
-      pattern: 'https://github.com/daodao97/goadmin/edit/dcos/docs/:path',
+      pattern: 'https://github.com/daodao97/goadmin/edit/docs/docs/:path',
       text: 'Edit this page on GitHub'
     },
 
