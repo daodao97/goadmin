@@ -1,0 +1,25 @@
+package {{ .PkgName }}
+
+import (
+	"github.com/gin-gonic/gin"
+
+	"github.com/daodao97/goadmin/scaffold"
+)
+
+func NewCtrl(s scaffold.Scaffold) scaffold.Ctrl {
+	service := NewService(&s)
+	return &ctrl{
+		service:  service,
+		FullCtrl: scaffold.NewFullCtrl(service.GetScaffold(), "{{ .PathPrefix }}"),
+	}
+}
+
+type ctrl struct {
+	service *Service
+	scaffold.FullCtrl
+}
+
+func (c *ctrl) Route(e *gin.Engine) {
+	c.FullCtrl.RegRoute(e)
+	// other route
+}

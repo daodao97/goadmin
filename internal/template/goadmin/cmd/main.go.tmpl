@@ -1,0 +1,35 @@
+package main
+
+import (
+	"flag"
+	"time"
+
+	"github.com/daodao97/goadmin/pkg/log"
+	{{- if .DriverMysql }}
+	_ "github.com/go-sql-driver/mysql"
+	{{ end -}}
+    {{- if .DriverSqlite }}
+    _ "github.com/mattn/go-sqlite3"
+    {{ end -}}
+	_ "go.uber.org/automaxprocs"
+)
+
+func main() {
+	flag.Parse()
+	app, closeFunc, err := initApp()
+	if err != nil {
+		panic(err)
+	}
+
+	exit, err := app.Start()
+	if err != nil {
+		panic(err)
+	}
+
+	for range exit {
+		closeFunc()
+		log.Info("admin exit")
+		time.Sleep(time.Second)
+		return
+	}
+}

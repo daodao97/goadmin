@@ -1,0 +1,27 @@
+## goadmin scaffold config ##
+[HttpServer]
+    addr = ":8000"
+    webPath = "/admin" # 若定义 webPath 则会启动内置UI页面
+[Jwt]
+    {{- if .DefaultJWT }}
+    Secret = "abc" # 请修改
+    {{- else }}
+    Secret = "{token_secret}" # 请修改
+    {{- end }}
+    TokenExpire = 86400
+    OpenApi = []
+[[Database]]
+    name = "default"
+    {{- if .DriverMysql }}
+    dsn = "root@tcp(127.0.0.1:3306)/go_admin?parseTime=true"
+    {{ end -}}
+    {{- if .DriverSqlite }}
+    driver = "sqlite3"
+    dsn = "goadmin.db"
+    {{- end }}
+
+## application config ##
+{{- if .DriverMysql }}
+[Redis]
+    addr = "127.0.0.1:6379"
+{{ end -}}

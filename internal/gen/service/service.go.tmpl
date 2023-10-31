@@ -1,0 +1,22 @@
+package {{ .PkgName }}
+
+import (
+	"github.com/daodao97/goadmin/pkg/db"
+	"github.com/daodao97/goadmin/scaffold"
+	"github.com/gin-gonic/gin"
+)
+
+func NewService(s *scaffold.Scaffold) *Service {
+	s.SetModel(db.New("{{ .TableName }}"))
+	return &Service{
+		Scaffold: s,
+	}
+}
+
+type Service struct {
+	*scaffold.Scaffold
+}
+
+func (e *Service) GetScaffold() *scaffold.Scaffold {
+	return e.Scaffold
+}
