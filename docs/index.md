@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 查看文档
-      link: /guide/design-philosophy
+      link: /guide/what-is-goadmin
 features:
   - title: Feature A
     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit

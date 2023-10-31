@@ -6,7 +6,7 @@ export default defineConfig({
   description: "一个配置化开发后台管理系统",
   lastUpdated: true,
   cleanUrls: true,
-  base: '',
+  base: '/goadmin',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
