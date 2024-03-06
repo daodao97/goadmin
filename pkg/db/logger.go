@@ -19,7 +19,6 @@ func Error(msg string, kv ...interface{}) {
 func dbLog(prefix string, start time.Time, err *error, kv *[]interface{}) {
 	tc := time.Since(start)
 	_log := []interface{}{
-		prefix,
 		"ums:", tc.Milliseconds(),
 	}
 	_log = append(_log, *kv...)
@@ -28,5 +27,5 @@ func dbLog(prefix string, start time.Time, err *error, kv *[]interface{}) {
 		logger.Log(_logger.LevelError, "", _log...)
 		return
 	}
-	logger.Log(_logger.LevelDebug, "", _log...)
+	logger.Log(_logger.LevelDebug, prefix, _log...)
 }

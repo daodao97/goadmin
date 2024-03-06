@@ -18,6 +18,11 @@ type Config struct {
 
 var pool = sync.Map{}
 
+type DbPool struct {
+	db   *sql.DB
+	conf *Config
+}
+
 func Init(conns map[string]*Config) error {
 	for conn, conf := range conns {
 		db, err := NewDb(conf)
@@ -53,18 +58,22 @@ func readConn(conn string) string {
 	return conn + "_read"
 }
 
-func db(conn string) (*sql.DB, error) {
+func db(conn string) (*DbPool, error) {
 	if _db, ok := pool.Load(conn); ok {
-		return _db.(*sql.DB), nil
+		return _db.(*DbPool), nil
 	}
 	return nil, errors.New("connection not found : " + conn)
 }
 
 func DB(conn string) (*sql.DB, error) {
-	return db(conn)
+	_db, err := db(conn)
+	if err != nil {
+		return nil, err
+	}
+	return _db.db, nil
 }
 
-func NewDb(conf *Config) (*sql.DB, error) {
+func NewDb(conf *Config) (*DbPool, error) {
 	driver := conf.Driver
 	if driver == "" {
 		driver = "mysql"
@@ -89,5 +98,8 @@ func NewDb(conf *Config) (*sql.DB, error) {
 		MaxIdle = conf.MaxIdleConn
 	}
 	db.SetMaxIdleConns(MaxIdle)
-	return db, nil
+	return &DbPool{
+		db:   db,
+		conf: conf,
+	}, nil
 }

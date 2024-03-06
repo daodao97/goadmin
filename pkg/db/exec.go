@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"strings"
 	"time"
 
@@ -49,6 +50,33 @@ func query(db *sql.DB, _sql string, args ...interface{}) (result []Row, err erro
 	defer rows.Close()
 
 	return rows2SliceMap(rows)
+}
+
+var needConvertPlaceholder = false
+
+// SetNeedConvertPlaceholder 设置是否需要将SQL语句中的?占位符按顺序替换为$1, $2, $3等
+func SetNeedConvertPlaceholder(b bool) {
+	needConvertPlaceholder = b
+}
+
+// convertPlaceholders 将SQL语句中的?占位符按顺序替换为$1, $2, $3等
+func convertPlaceholders(sql string) string {
+	if !needConvertPlaceholder {
+		return sql
+	}
+	// Split the SQL into parts on '?'
+	parts := strings.Split(sql, "?")
+	// Initialize an empty slice to hold the parts with placeholders replaced
+	var newParts []string
+	// Loop over the parts and append the correct placeholder
+	for i, part := range parts {
+		newParts = append(newParts, part)
+		if i < len(parts)-1 { // Avoid appending a placeholder after the last part
+			newParts = append(newParts, fmt.Sprintf("$%d", i+1))
+		}
+	}
+	// Join the parts back together
+	return strings.Join(newParts, "")
 }
 
 func destination(columnTypes []*sql.ColumnType) func() []interface{} {

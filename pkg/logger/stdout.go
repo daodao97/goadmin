@@ -3,17 +3,18 @@ package logger
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fatih/color"
 	"log"
 	"os"
 	"runtime"
+
+	"github.com/fatih/color"
 )
 
 var (
-	red    = color.New(color.BgRed).Sprint
-	yellow = color.New(color.BgHiYellow).Sprint
-	green  = color.New(color.BgGreen).Sprint
-	gray   = color.New(color.BgCyan).Sprint
+	red    = color.New(color.FgRed).Sprint
+	yellow = color.New(color.FgYellow).Sprint
+	green  = color.New(color.FgGreen).Sprint
+	gray   = color.New(color.FgBlue).Sprint
 	prefix = color.New(color.FgGreen).Sprint
 )
 

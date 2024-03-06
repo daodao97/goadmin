@@ -38,6 +38,7 @@ type model struct {
 	options         *Options
 	client          *sql.DB
 	readClient      *sql.DB
+	config          *Config
 	saveZero        bool
 	enableValidator bool
 	err             error
@@ -60,12 +61,18 @@ func New(table string, baseOpt ...With) *model {
 	}
 
 	if m.client == nil {
-		m.client, m.err = db(m.connection)
+		p, err := db(m.connection)
+		if err != nil {
+			m.err = err
+			return m
+		}
+		m.client = p.db
+		m.config = p.conf
 	}
 	if m.readClient == nil {
-		readClient, err := db(readConn(m.connection))
+		p, err := db(readConn(m.connection))
 		if err == nil {
-			m.readClient = readClient
+			m.readClient = p.db
 		}
 	}
 	m.enableValidator = true
@@ -95,10 +102,12 @@ func (m *model) Select(opt ...Option) (rows *Rows) {
 	}
 
 	_sql, args := SelectBuilder(opt...)
+
 	client := m.client
 	if m.readClient != nil {
 		client = m.readClient
 	}
+
 	res, err := query(client, _sql, args...)
 	kv = append(kv, "sql:", _sql, "args:", args)
 	if err != nil {
@@ -173,10 +182,6 @@ func (m *model) Insert(record Record) (lastId int64, err error) {
 	defer dbLog("Insert", time.Now(), &err, &kv)
 
 	_record := record
-	//_record, err := util.DecodeToMap(record, m.saveZero)
-	//if err != nil {
-	//	return 0, err
-	//}
 	if len(_record) == 0 {
 		return 0, errors.New("empty record to insert, if your record is struct please set db tag")
 	}
@@ -202,14 +207,20 @@ func (m *model) Insert(record Record) (lastId int64, err error) {
 
 	ks, vs := m.recordToKV(_record)
 	_sql, args := InsertBuilder(table(m.table), Field(ks...), Value(vs...))
+
+	if m.config.Driver == "postgres" {
+		_sql = _sql + " RETURNING " + m.primaryKey
+	}
+
 	kv = append(kv, "sql:", _sql, "args:", vs)
 
-	result, err := exec(m.client, _sql, args...)
+	err = m.client.QueryRow(_sql, args...).Scan(&lastId)
+	//result, err := exec(m.client, _sql, args...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.LastInsertId()
+	return lastId, nil
 }
 
 func (m *model) Update(record Record, opt ...Option) (ok bool, err error) {

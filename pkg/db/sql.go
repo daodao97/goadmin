@@ -7,14 +7,15 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/daodao97/goadmin/pkg/db/interval/util"
 	"github.com/spf13/cast"
+
+	"github.com/daodao97/goadmin/pkg/db/interval/util"
 )
 
 var ErrRowBindingType = errors.New("binding dest type must be *struct **struct")
 var ErrRowsBindingType = errors.New("binding dest type must be *[]struct, *[]*struct")
 
-const selectMod = "select %s from `%s`"
+const selectMod = "select %s from %s"
 const insertMod = "insert into %s (%s) values (%s)"
 const updateMod = "update %s set %s"
 const deleteMod = "delete from %s"
@@ -120,13 +121,13 @@ func Field(name ...string) Option {
 	for _, v := range name {
 		if strings.Contains(v, " as ") {
 			tmp := strings.Split(v, " as ")
-			_name = append(_name, "`"+strings.Trim(tmp[0], " ")+"` as `"+strings.Trim(tmp[1], " ")+"`")
+			_name = append(_name, strings.Trim(tmp[0], " ")+" as "+strings.Trim(tmp[1], " "))
 		} else if strings.Contains(v, " AS ") {
 			tmp := strings.Split(v, " AS ")
-			_name = append(_name, "`"+strings.Trim(tmp[0], " ")+"` as `"+strings.Trim(tmp[1], " ")+"`")
-			_name = append(_name, "`"+v+"`")
+			_name = append(_name, strings.Trim(tmp[0], " ")+" as "+strings.Trim(tmp[1], " "))
+			_name = append(_name, v)
 		} else {
-			_name = append(_name, "`"+v+"`")
+			_name = append(_name, v)
 		}
 	}
 	return func(opts *Options) {
@@ -446,13 +447,13 @@ func WhereOrFindInSet(field string, value interface{}) Option {
 
 func OrderByDesc(field string) Option {
 	return func(opts *Options) {
-		opts.orderBy = append(opts.orderBy, "`"+field+"` "+"desc")
+		opts.orderBy = append(opts.orderBy, field+" desc")
 	}
 }
 
 func OrderByAsc(field string) Option {
 	return func(opts *Options) {
-		opts.orderBy = append(opts.orderBy, "`"+field+"` "+"asc")
+		opts.orderBy = append(opts.orderBy, field+" asc")
 	}
 }
 
@@ -484,17 +485,17 @@ func whereBuilder(condition []where) (sql string, args []interface{}) {
 				for range val {
 					placeholder = append(placeholder, "?")
 				}
-				tokens = append(tokens, fmt.Sprintf("`%s` %s (%s)", v.field, v.operator, strings.Join(placeholder, ",")))
+				tokens = append(tokens, fmt.Sprintf("%s %s (%s)", v.field, v.operator, strings.Join(placeholder, ",")))
 				args = append(args, val...)
 			case "between":
 				val := v.value.([]interface{})
-				tokens = append(tokens, fmt.Sprintf("`%s` %s ? and ?", v.field, v.operator))
+				tokens = append(tokens, fmt.Sprintf("%s %s ? and ?", v.field, v.operator))
 				args = append(args, val...)
 			case "find_in_set":
 				tokens = append(tokens, fmt.Sprintf("find_in_set(?, %s)", v.field))
 				args = append(args, v.value)
 			default:
-				tokens = append(tokens, fmt.Sprintf("`%s` %s ?", v.field, v.operator))
+				tokens = append(tokens, fmt.Sprintf("%s %s ?", v.field, v.operator))
 				args = append(args, v.value)
 			}
 		}
@@ -536,11 +537,11 @@ func SelectBuilder(opts ...Option) (sql string, args []interface{}) {
 	}
 
 	if _opts.limit != 0 {
-		sql = sql + " limit ? offset ? "
-		args = append(args, _opts.limit, _opts.offset)
+		sql = sql + " offset ? limit ? "
+		args = append(args, _opts.offset, _opts.limit)
 	}
 
-	return sql, args
+	return convertPlaceholders(sql), args
 }
 
 func getTable(opt *Options) string {
@@ -561,7 +562,7 @@ func InsertBuilder(opts ...Option) (sql string, args []interface{}) {
 	}
 	sql = fmt.Sprintf(insertMod, getTable(_opts), strings.Join(_opts.field, ", "), strings.Join(_val, ","))
 	args = _opts.value
-	return sql, args
+	return convertPlaceholders(sql), args
 }
 
 func UpdateBuilder(opts ...Option) (sql string, args []interface{}) {
@@ -580,7 +581,7 @@ func UpdateBuilder(opts ...Option) (sql string, args []interface{}) {
 		sql = sql + " where " + _where
 		args = append(args, _args...)
 	}
-	return sql, args
+	return convertPlaceholders(sql), args
 }
 
 func DeleteBuilder(opts ...Option) (sql string, args []interface{}) {
@@ -594,5 +595,5 @@ func DeleteBuilder(opts ...Option) (sql string, args []interface{}) {
 		sql = sql + " where " + _where
 		args = append(args, _args...)
 	}
-	return sql, args
+	return convertPlaceholders(sql), args
 }
