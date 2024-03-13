@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -51,6 +52,14 @@ func (r *Row) GetString(key string) string {
 		return ""
 	}
 	return cast.ToString(v)
+}
+
+func (r *Row) GetTime(key string) *time.Time {
+	v, ok := r.Data[key]
+	if !ok {
+		return nil
+	}
+	return v.(*time.Time)
 }
 
 type Rows struct {

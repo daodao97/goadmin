@@ -82,6 +82,7 @@ func convertPlaceholders(sql string) string {
 func destination(columnTypes []*sql.ColumnType) func() []interface{} {
 	dest := make([]func() interface{}, 0, len(columnTypes))
 	for _, v := range columnTypes {
+		//fmt.Println(v.Name(), v.DatabaseTypeName())
 		switch strings.ToUpper(v.DatabaseTypeName()) {
 		case "VARCHAR", "CHAR", "TEXT", "NVARCHAR", "LONGTEXT", "LONGBLOB", "MEDIUMTEXT", "MEDIUMBLOB", "BLOB", "TINYTEXT", "DECIMAL":
 			if nullable, _ := v.Nullable(); nullable {
@@ -90,7 +91,7 @@ func destination(columnTypes []*sql.ColumnType) func() []interface{} {
 				})
 			} else {
 				dest = append(dest, func() interface{} {
-					return new(string)
+					return new(sql.NullString)
 				})
 			}
 		case "UNSIGNED INT", "UNSIGNED TINYINT", "UNSIGNED INTEGER", "UNSIGNED SMALLINT", "UNSIGNED MEDIUMINT", "UNSIGNED TINYINTEGER":
@@ -101,7 +102,7 @@ func destination(columnTypes []*sql.ColumnType) func() []interface{} {
 			dest = append(dest, func() interface{} {
 				return new(uint64)
 			})
-		case "INT", "TINYINT", "INTEGER", "SMALLINT", "MEDIUMINT", "TINYINTEGER":
+		case "INT", "INT8", "TINYINT", "INTEGER", "SMALLINT", "MEDIUMINT", "TINYINTEGER":
 			dest = append(dest, func() interface{} {
 				return new(int)
 			})
@@ -109,7 +110,7 @@ func destination(columnTypes []*sql.ColumnType) func() []interface{} {
 			dest = append(dest, func() interface{} {
 				return new(int64)
 			})
-		case "DATETIME", "DATE", "TIMESTAMP", "TIME":
+		case "DATETIME", "DATE", "TIMESTAMP", "TIME", "TIMESTAMPTZ":
 			dest = append(dest, func() interface{} {
 				return new(time.Time)
 			})
@@ -119,7 +120,7 @@ func destination(columnTypes []*sql.ColumnType) func() []interface{} {
 			})
 		default:
 			dest = append(dest, func() interface{} {
-				return new(string)
+				return new(sql.NullString)
 			})
 		}
 	}
