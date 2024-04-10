@@ -109,7 +109,7 @@ func (m *model) Select(opt ...Option) (rows *Rows) {
 	}
 
 	res, err := query(client, _sql, args...)
-	kv = append(kv, "sql:", _sql, "args:", args)
+	kv = append(kv, "sql", _sql, "args", args)
 	if err != nil {
 		return &Rows{Err: err}
 	}
@@ -212,7 +212,7 @@ func (m *model) Insert(record Record) (lastId int64, err error) {
 		_sql = _sql + " RETURNING " + m.primaryKey
 	}
 
-	kv = append(kv, "sql:", _sql, "args:", vs)
+	kv = append(kv, "sql", _sql, "args", vs)
 
 	err = m.client.QueryRow(_sql, args...).Scan(&lastId)
 	//result, err := exec(m.client, _sql, args...)
@@ -268,7 +268,7 @@ func (m *model) Update(record Record, opt ...Option) (ok bool, err error) {
 	opt = append(opt, table(m.table), Field(ks...), Value(vs...))
 
 	_sql, args := UpdateBuilder(opt...)
-	kv = append(kv, "sql:", _sql, "args:", vs)
+	kv = append(kv, "sql", _sql, "args", vs)
 
 	result, err := exec(m.client, _sql, args...)
 	if err != nil {
@@ -305,7 +305,7 @@ func (m *model) Delete(opt ...Option) (ok bool, err error) {
 	defer dbLog("Delete", time.Now(), &err, &kv)
 
 	_sql, args := DeleteBuilder(opt...)
-	kv = append(kv, "slq:", _sql, "args:", args)
+	kv = append(kv, "slq", _sql, "args", args)
 
 	result, err := exec(m.client, _sql, args...)
 	if err != nil {

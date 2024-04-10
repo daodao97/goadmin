@@ -2,23 +2,20 @@ package gen
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/BurntSushi/toml"
-	"github.com/daodao97/goadmin/pkg/db"
-	"github.com/daodao97/goadmin/pkg/logger"
-	"github.com/daodao97/goadmin/pkg/util"
-	"github.com/daodao97/goadmin/scaffold"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
-	"os"
+
+	"github.com/daodao97/goadmin/pkg/db"
+	"github.com/daodao97/goadmin/pkg/util"
+	"github.com/daodao97/goadmin/scaffold"
 )
 
 const (
 	columnSql = "select `COLUMN_NAME`, `DATA_TYPE`, `COLUMN_COMMENT` from information_schema.COLUMNS where `TABLE_SCHEMA` = ? and `TABLE_NAME` = ? order by ORDINAL_POSITION"
 )
-
-func init() {
-	logger.SetLoggerLevel(logger.LevelError)
-}
 
 func CratePage(routeName, conn, database, table string) error {
 	confFile, err := findApplicationTomlPath()

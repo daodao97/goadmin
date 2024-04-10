@@ -3,29 +3,29 @@ package db
 import (
 	"time"
 
-	_logger "github.com/daodao97/goadmin/pkg/logger"
+	"github.com/daodao97/goadmin/pkg/log"
 )
 
-var logger = _logger.Default()
-
 func Info(msg string, kv ...interface{}) {
-	logger.Log(_logger.LevelInfo, msg, kv...)
+	log.Info(msg, kv...)
 }
 
 func Error(msg string, kv ...interface{}) {
-	logger.Log(_logger.LevelError, msg, kv...)
+	log.Error(msg, kv...)
 }
 
 func dbLog(prefix string, start time.Time, err *error, kv *[]interface{}) {
 	tc := time.Since(start)
 	_log := []interface{}{
-		"ums:", tc.Milliseconds(),
+		"scope", "db",
+		"prefix", prefix,
+		"ums", tc.Milliseconds(),
 	}
 	_log = append(_log, *kv...)
 	if *err != nil {
-		_log = append(_log, "error:", *err)
-		logger.Log(_logger.LevelError, "", _log...)
+		_log = append(_log, "error", *err)
+		log.Error("query", _log...)
 		return
 	}
-	logger.Log(_logger.LevelDebug, prefix, _log...)
+	log.Debug("query", _log...)
 }
