@@ -18,18 +18,23 @@ func SetLogger(l *slog.Logger) {
 	slog.SetDefault(l)
 }
 
-func StdoutText() *slog.Logger {
-	return slog.New(slog.NewTextHandler(os.Stdout, &opts))
+func StdoutText(opts ...Option) *slog.Logger {
+	_opts := NewOptions(opts...)
+	return slog.New(slog.NewTextHandler(os.Stdout, &_opts.HandlerOptions))
 }
 
-func StdoutTextPretty() *slog.Logger {
+func StdoutTextPretty(opts ...Option) *slog.Logger {
+	_opts := NewOptions(opts...)
+
 	return slog.New(NewPrettyHandler(os.Stdout, PrettyHandlerOptions{
-		SlogOpts: opts,
+		SlogOpts: _opts.HandlerOptions,
 	}))
 }
 
-func StdoutJson() *slog.Logger {
-	return slog.New(slog.NewJSONHandler(os.Stdout, &opts))
+func StdoutJson(opts ...Option) *slog.Logger {
+	_opts := NewOptions(opts...)
+
+	return slog.New(slog.NewJSONHandler(os.Stdout, &_opts.HandlerOptions))
 }
 
 func FileJson(fileName string) *slog.Logger {

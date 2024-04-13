@@ -2,10 +2,10 @@ package log
 
 import (
 	"context"
-	"encoding/json"
 	"io"
 	"log"
 	"log/slog"
+	"time"
 
 	"github.com/fatih/color"
 )
@@ -20,7 +20,7 @@ type PrettyHandler struct {
 }
 
 func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
-	level := r.Level.String() + ":"
+	level := r.Level.String()
 
 	switch r.Level {
 	case slog.LevelDebug:
@@ -33,27 +33,17 @@ func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
 		level = color.RedString(level)
 	}
 
-	fields := make(map[string]interface{}, r.NumAttrs())
+	_log := []any{
+		color.New(color.Faint).Sprint(r.Time.Format(time.DateTime)),
+		level,
+		r.Message,
+	}
+
 	r.Attrs(func(a slog.Attr) bool {
-		fields[a.Key] = a.Value.Any()
+		_log = append(_log, slog.Any(color.New(color.FgCyan).Sprintf(a.Key), a.Value.Any()))
 
 		return true
 	})
-
-	b, err := json.MarshalIndent(fields, "", "  ")
-	if err != nil {
-		return err
-	}
-
-	timeStr := r.Time.Format("[15:05:05.000]")
-	msg := color.CyanString(r.Message)
-
-	_log := []any{
-		timeStr, level, msg,
-	}
-	if len(fields) > 0 {
-		_log = append(_log, string(b))
-	}
 
 	h.l.Println(_log...)
 
