@@ -1,6 +1,7 @@
 package log
 
 import (
+	"context"
 	"log/slog"
 	"os"
 
@@ -49,18 +50,50 @@ func FileJson(fileName string) *slog.Logger {
 	return slog.New(slog.NewJSONHandler(r, &opts))
 }
 
-func Debug(msg string, kv ...any) {
-	logger.Debug(msg, kv...)
+func Debug(msg string, args ...any) {
+	logger.Debug(msg, args...)
 }
 
-func Info(msg string, kv ...any) {
-	logger.Info(msg, kv...)
+func Info(msg string, args ...any) {
+	logger.Info(msg, args...)
 }
 
-func Error(msg string, kv ...any) {
-	logger.Error(msg, kv...)
+func Error(msg string, args ...any) {
+	logger.Error(msg, args...)
 }
 
-func Warn(msg string, kv ...any) {
-	logger.Warn(msg, kv...)
+func Warn(msg string, args ...any) {
+	logger.Warn(msg, args...)
+}
+
+func DebugCtx(ctx context.Context, msg string, args ...any) {
+	if requestId := ctx.Value("request_id"); requestId != nil {
+		args = append([]any{requestId.(string)}, args...)
+	}
+	logger.DebugContext(ctx, msg, args...)
+}
+
+func InfoCtx(ctx context.Context,msg string, args ...any) {
+	if requestId := ctx.Value("request_id"); requestId != nil {
+		args = append([]any{requestId.(string)}, args...)
+	}
+	logger.InfoContext(ctx, msg, args...)
+}
+
+func ErrorCtx(ctx context.Context,msg string, args ...any) {
+	if requestId := ctx.Value("request_id"); requestId != nil {
+		args = append([]any{requestId.(string)}, args...)
+	}
+	logger.ErrorContext(ctx, msg, args...)
+}
+
+func WarnCtx(ctx context.Context,msg string, args ...any) {
+	if requestId := ctx.Value("request_id"); requestId != nil {
+		args = append([]any{requestId.(string)}, args...)
+	}
+	logger.WarnContext(ctx, msg, args...)
+}
+
+func Err(err error) slog.Attr {
+	return slog.Any("err", err)
 }
