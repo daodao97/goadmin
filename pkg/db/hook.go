@@ -17,6 +17,12 @@ func Json(field string) Hook {
 	}
 }
 
+func Array(field string) Hook {
+	return func() (string, HookData) {
+		return field, &hook.Array{}
+	}
+}
+
 func CommaInt(field string) Hook {
 	return func() (string, HookData) {
 		return field, &hook.CommaSeparatedInt{}

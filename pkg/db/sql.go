@@ -54,6 +54,22 @@ func (r *Row) GetString(key string) string {
 	return cast.ToString(v)
 }
 
+func (r *Row) GetInt(key string) int {
+	v, ok := r.Data[key]
+	if !ok {
+		return 0
+	}
+	return cast.ToInt(v)
+}
+
+func (r *Row) GetArray(key string) []any {
+	v, ok := r.Data[key]
+	if !ok {
+		return []any{}
+	}
+	return cast.ToSlice(v)
+}
+
 func (r *Row) GetTime(key string) *time.Time {
 	v, ok := r.Data[key]
 	if !ok {
