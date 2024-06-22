@@ -1,13 +1,23 @@
 package db
 
 import (
+	"github.com/daodao97/xgo/xlog"
+	"github.com/spf13/cast"
 	"time"
 
 	"github.com/daodao97/goadmin/pkg/log"
 )
 
 func Info(msg string, kv ...interface{}) {
-	log.Info(msg, kv...)
+	var _log []any
+	for i := 0; i < len(kv); i++ {
+		if i%2 == 0 {
+			key := (kv)[i]
+			val := (kv)[i+1]
+			_log = append(_log, xlog.Any(cast.ToString(key), val))
+		}
+	}
+	xlog.Debug(msg, _log...)
 }
 
 func Error(msg string, kv ...interface{}) {
@@ -16,16 +26,25 @@ func Error(msg string, kv ...interface{}) {
 
 func dbLog(prefix string, start time.Time, err *error, kv *[]interface{}) {
 	tc := time.Since(start)
-	_log := []interface{}{
-		"scope", "db",
-		"prefix", prefix,
-		"ums", tc.Milliseconds(),
+
+	_log := []any{
+		xlog.String("method", prefix),
+		xlog.String("scope", "db"),
+		xlog.Any("duration", tc),
 	}
-	_log = append(_log, *kv...)
+
+	for i := 0; i < len(*kv); i++ {
+		if i%2 == 0 {
+			key := (*kv)[i]
+			val := (*kv)[i+1]
+			_log = append(_log, xlog.Any(cast.ToString(key), val))
+		}
+	}
+
 	if *err != nil {
-		_log = append(_log, "error", *err)
-		log.Error("query", _log...)
+		_log = append(_log, xlog.Any("error", *err))
+		xlog.Error("query", _log...)
 		return
 	}
-	log.Debug("query", _log...)
+	xlog.Debug("query", _log...)
 }

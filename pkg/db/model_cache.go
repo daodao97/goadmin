@@ -3,6 +3,7 @@ package db
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/daodao97/xgo/xlog"
 
 	"github.com/pkg/errors"
 )
@@ -33,7 +34,7 @@ func (m *model) FindBy(id int64) *Row {
 		if err != nil {
 			return &Row{Err: err}
 		}
-		Info("FindBy id:", id, "form cache", c)
+		xlog.Debug("FindBy id:", xlog.Any("id", id), xlog.Any("cache", c))
 		return &Row{Data: result}
 	}
 
@@ -66,7 +67,7 @@ func (m *model) UpdateBy(id int64, record Record) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	Info("del key after UpdateBy id:", id)
+	xlog.Debug("del key after UpdateBy id", xlog.Any("id", id))
 
 	return true, nil
 }

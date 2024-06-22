@@ -1,7 +1,7 @@
 package db
 
 import (
-	"fmt"
+	"github.com/daodao97/xgo/xlog"
 	"regexp"
 	"strings"
 
@@ -55,7 +55,7 @@ func (m *model) hasOneData(rows []Row, opt HasOpts) ([]Row, error) {
 	}
 
 	if len(localKeys) == 0 {
-		Info("hasOneData empty localKeys", fmt.Sprintf("%+v", opt))
+		xlog.Debug("hasOneData empty localKeys", xlog.Any("opt", opt))
 		return rows, nil
 	}
 
@@ -100,7 +100,7 @@ func (m *model) hasManyData(rows []Row, opt HasOpts) ([]Row, error) {
 	}
 
 	if len(localKeys) == 0 {
-		Info("hasManyData empty localKeys", fmt.Sprintf("%+v", opt))
+		xlog.Info("hasManyData empty localKeys", xlog.Any("opt", opt))
 		return rows, nil
 	}
 
