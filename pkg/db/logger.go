@@ -36,7 +36,10 @@ func dbLog(prefix string, start time.Time, err *error, kv *[]interface{}) {
 	for i := 0; i < len(*kv); i++ {
 		if i%2 == 0 {
 			key := (*kv)[i]
-			val := (*kv)[i+1]
+			val := key
+			if indexExists(*kv, i+1) {
+				val = (*kv)[i+1]
+			}
 			_log = append(_log, xlog.Any(cast.ToString(key), val))
 		}
 	}
@@ -47,4 +50,8 @@ func dbLog(prefix string, start time.Time, err *error, kv *[]interface{}) {
 		return
 	}
 	xlog.Debug("query", _log...)
+}
+
+func indexExists(arr []any, index int) bool {
+	return index >= 0 && index < len(arr)
 }
