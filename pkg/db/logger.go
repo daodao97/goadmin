@@ -4,8 +4,6 @@ import (
 	"github.com/daodao97/xgo/xlog"
 	"github.com/spf13/cast"
 	"time"
-
-	"github.com/daodao97/goadmin/pkg/log"
 )
 
 func Info(msg string, kv ...interface{}) {
@@ -21,7 +19,7 @@ func Info(msg string, kv ...interface{}) {
 }
 
 func Error(msg string, kv ...interface{}) {
-	log.Error(msg, kv...)
+	xlog.Error(msg, kv...)
 }
 
 func dbLog(prefix string, start time.Time, err *error, kv *[]interface{}) {

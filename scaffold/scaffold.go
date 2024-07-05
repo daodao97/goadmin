@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"github.com/daodao97/goadmin/pkg/cache"
 	"github.com/daodao97/goadmin/pkg/ecode"
-	"github.com/daodao97/goadmin/pkg/log"
 	"github.com/daodao97/goadmin/pkg/sso"
 	"github.com/daodao97/goadmin/pkg/util"
 	"github.com/daodao97/goadmin/scaffold/dao"
+	"github.com/daodao97/xgo/xlog"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -28,7 +28,7 @@ var Provider = wire.NewSet(NewUserState, wire.Struct(new(Options), "*"), New)
 
 type Options struct {
 	Conf      *Conf      // 脚手架依赖配置
-	UserState *UserState // 登录对象
+	UserState *UserState // 用户对象
 	Cache     cache.Cache
 	Sso       *sso.Sso
 }
@@ -312,7 +312,7 @@ func (s *Scaffold) List(ctx *gin.Context) (*ListResp, error) { //nolint:gocognit
 		if err == nil {
 			rows = newRows
 		} else {
-			log.Warn("hasOne err:%v str:%s", err, str)
+			xlog.Warn("hasOne", xlog.Err(err), xlog.String("str", str))
 		}
 	}
 
@@ -321,7 +321,7 @@ func (s *Scaffold) List(ctx *gin.Context) (*ListResp, error) { //nolint:gocognit
 		if err == nil {
 			rows = newRows
 		} else {
-			log.Warn("hasMany err:%v str:%s", err, v.HasMany)
+			xlog.Warn("hasMany", xlog.Err(err), xlog.String("str", v.HasMany))
 		}
 	}
 

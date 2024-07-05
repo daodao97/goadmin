@@ -6,7 +6,6 @@ import (
 	"github.com/daodao97/goadmin/pkg/cache"
 	"github.com/daodao97/goadmin/pkg/db"
 	"github.com/daodao97/goadmin/pkg/ecode"
-	"github.com/daodao97/goadmin/pkg/log"
 	"github.com/daodao97/goadmin/pkg/util"
 	"github.com/daodao97/goadmin/pkg/util/uploader"
 	"github.com/pkg/errors"
@@ -28,16 +27,18 @@ func NewEngine(c *Conf, up uploader.Uploader, user *UserState, s Scaffold) *gin.
 	}
 	e := gin.Default()
 	if c.HttpServer.WebPath != "" {
-		e.Use(front.ModifyIndexHTML(c.HttpServer.WebPath))
+		e.Use(front.ModifyIndexHTML(c.HttpServer.WebPath, map[string]any{
+			"basePath": c.HttpServer.BasePath,
+			"webPath":  c.HttpServer.WebPath,
+		}))
 		e.StaticFS(c.HttpServer.WebPath, front.Static())
 	}
-	root := e.Group(c.HttpServer.BasePath)
+	root := e.Group(c.HttpServer.BasePath).Use(Auth(c, user))
 	root.GET("/ping", ping)
 	root.POST("/upload", upload(up))
 	root.Any("/proxy/:path", proxy)
 	root.GET("/schema/*route", schemaByRoute(s))
 	root.GET("/form_mutex", formMutex(s))
-	e.RouterGroup.Use(Auth(c, user))
 	return e
 }
 
@@ -118,7 +119,6 @@ func upload(up uploader.Uploader) func(ctx *gin.Context) {
 		}
 		allowed := util.ArrStr{"image/jpeg", "image/png", "image/webp", "image/gif", "text/csv", typeSvga}
 		if !allowed.Has(ftype) {
-			log.Error("filetype not allow file type(%s)", ftype)
 			RenderErrMsg(ctx, ecode.RequestErr.Code(), "不支持的文件类型 "+ftype)
 			return
 		}

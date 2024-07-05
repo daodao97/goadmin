@@ -1,11 +1,12 @@
 package front
 
 import (
+	"bytes"
 	"embed"
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"io/fs"
 	"net/http"
-	"strings"
 )
 
 //go:embed static/*
@@ -16,25 +17,39 @@ func Static() http.FileSystem {
 	return http.FS(assets)
 }
 
-func ModifyIndexHTML(basePath string) gin.HandlerFunc {
+func ModifyIndexHTML(webPath string, data map[string]any) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if ctx.Request.URL.Path != basePath+"/" {
+		if ctx.Request.URL.Path != webPath+"/" {
 			return
 		}
-		// 读取 index.html 文件
-		indexContent, err := static.ReadFile("static/index.html")
+		indexHtml, err := renderIndex(data)
 		if err != nil {
-			ctx.String(http.StatusInternalServerError, "Failed to read index.html")
+			ctx.String(http.StatusInternalServerError, "Failed to render index.html")
 			ctx.Abort()
 			return
 		}
-
-		indexContentStr := string(indexContent)
-		indexContentStr = strings.Replace(indexContentStr, "{{ base_path }}", basePath, -1)
-
 		// 设置修改后的内容回响应体
 		ctx.Header("Content-Type", "text/html; charset=utf-8")
-		ctx.String(http.StatusOK, indexContentStr)
+		ctx.String(http.StatusOK, string(indexHtml))
 		ctx.Abort()
 	}
+}
+
+func renderIndex(data map[string]any) ([]byte, error) {
+	fileData, err := fs.ReadFile(static, "static/index.html")
+	if err != nil {
+		return nil, err
+	}
+
+	tmpl, _ := template.New("index").Funcs(template.FuncMap{
+		"js": func(s string) template.JS {
+			return template.JS(s)
+		},
+	}).Parse(string(fileData))
+
+	var buf1 bytes.Buffer
+	if err := tmpl.Execute(&buf1, data); err != nil {
+		return nil, err
+	}
+	return buf1.Bytes(), nil
 }

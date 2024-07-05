@@ -2,59 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="{{ base_path }}/favicon.ico"/>
+    <link rel="icon" href="favicon.ico"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
-  <script type="module" crossorigin src="{{ base_path }}/assets/index-dbad9bb8.js"></script>
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/crypto-js-324edac3.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue-shared-138e5322.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue-reactivity-557f7d4b.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue-runtime-core-ffab33f8.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue-runtime-dom-97cbdded.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue-compiler-core-31f6ac9f.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue-compiler-dom-d7ac96ab.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue-d82d38a0.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue-devtools-api-fe0a227a.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vuex-5d055800.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/source-map-10ecd997.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/handlebars-c667631b.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/dayjs-f18a4a92.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/lodash-e851e67e.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/okiss-utils-602c6998.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/mockjs-dd17acb2.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/lodash-es-36eb724a.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vueuse-shared-89256809.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vueuse-core-fbf0da98.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/element-plus-icons-vue-13dcdfc2.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/sxzz-popperjs-es-c75af06c.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/ctrl-tinycolor-f8748455.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/async-validator-dee29e8b.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/memoize-one-297ddbcb.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/escape-html-ed6fd4d9.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/normalize-wheel-es-ed76fb12.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/floating-ui-core-a8b4680c.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/floating-ui-dom-50fb6901.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/element-plus-06cec8db.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/axios-2e20ef17.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/js-cookie-edb2da2a.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue-router-f0e82e03.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/path-to-regexp-6c7b4327.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/inputmask-c35b6c2e.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/sortablejs-73a6c5da.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vuedraggable-f53fb1c9.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/file-saver-23ab84fd.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/xlsx-624236af.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/okiss-vbtf-04481fae.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/mitt-fa5ce9e6.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/vue3-markdown-it-1ddd45d9.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/nprogress-d0980f19.js">
-  <link rel="modulepreload" crossorigin href="{{ base_path }}/assets/okiss-oms-7d7e7cee.js">
-  <link rel="stylesheet" href="{{ base_path }}/assets/element-plus-e867a70b.css">
-  <link rel="stylesheet" href="{{ base_path }}/assets/okiss-vbtf-718ad662.css">
-  <link rel="stylesheet" href="{{ base_path }}/assets/nprogress-8b89e2e0.css">
-  <link rel="stylesheet" href="{{ base_path }}/assets/okiss-oms-7b6c0d75.css">
-  <link rel="stylesheet" href="{{ base_path }}/assets/normalize-9d9ae4af.css">
-  <link rel="stylesheet" href="{{ base_path }}/assets/index-f735f7dd.css">
+  <script>
+    window.BASE_URL = "{{ .basePath }}"
+  </script>
+  <script type="module" crossorigin src="assets/index-3a08c92d.js"></script>
+  <link rel="modulepreload" crossorigin href="assets/any-base-0c0348fa.js">
+  <link rel="modulepreload" crossorigin href="assets/vue-ef54e887.js">
+  <link rel="modulepreload" crossorigin href="assets/vuex-8c136922.js">
+  <link rel="modulepreload" crossorigin href="assets/dayjs-c9238255.js">
+  <link rel="modulepreload" crossorigin href="assets/handlebars-0a290f5b.js">
+  <link rel="modulepreload" crossorigin href="assets/lodash-a1d5c59e.js">
+  <link rel="modulepreload" crossorigin href="assets/mockjs-d6c174dc.js">
+  <link rel="modulepreload" crossorigin href="assets/axios-a5c70fc4.js">
+  <link rel="modulepreload" crossorigin href="assets/js-cookie-edb2da2a.js">
+  <link rel="modulepreload" crossorigin href="assets/vue-router-986a864f.js">
+  <link rel="modulepreload" crossorigin href="assets/path-to-regexp-6c7b4327.js">
+  <link rel="modulepreload" crossorigin href="assets/normalize-wheel-es-ed76fb12.js">
+  <link rel="modulepreload" crossorigin href="assets/element-plus-1a22a05f.js">
+  <link rel="modulepreload" crossorigin href="assets/inputmask-bce15f34.js">
+  <link rel="modulepreload" crossorigin href="assets/vuedraggable-03d945f3.js">
+  <link rel="modulepreload" crossorigin href="assets/file-saver-f4520b47.js">
+  <link rel="modulepreload" crossorigin href="assets/xlsx-624236af.js">
+  <link rel="modulepreload" crossorigin href="assets/sortablejs-c9fcee54.js">
+  <link rel="modulepreload" crossorigin href="assets/lodash-es-36eb724a.js">
+  <link rel="modulepreload" crossorigin href="assets/vueuse-081d392c.js">
+  <link rel="modulepreload" crossorigin href="assets/ctrl-f8748455.js">
+  <link rel="modulepreload" crossorigin href="assets/async-validator-dee29e8b.js">
+  <link rel="modulepreload" crossorigin href="assets/escape-html-daea5661.js">
+  <link rel="modulepreload" crossorigin href="assets/mitt-c3e78cc3.js">
+  <link rel="modulepreload" crossorigin href="assets/vue3-markdown-it-02933edf.js">
+  <link rel="modulepreload" crossorigin href="assets/crypto-js-35adca75.js">
+  <link rel="modulepreload" crossorigin href="assets/nprogress-cef823ba.js">
+  <link rel="modulepreload" crossorigin href="assets/memoize-one-297ddbcb.js">
+  <link rel="modulepreload" crossorigin href="assets/floating-ui-b61e7844.js">
+  <link rel="modulepreload" crossorigin href="assets/okiss-1183cfbc.js">
+  <link rel="modulepreload" crossorigin href="assets/uuid-8046e909.js">
+  <link rel="modulepreload" crossorigin href="assets/short-uuid-a24fefdd.js">
+  <link rel="stylesheet" href="assets/element-plus-a75ec224.css">
+  <link rel="stylesheet" href="assets/nprogress-771398e6.css">
+  <link rel="stylesheet" href="assets/okiss-b0226a69.css">
+  <link rel="stylesheet" href="assets/normalize-9d9ae4af.css">
+  <link rel="stylesheet" href="assets/index-6d05712e.css">
 </head>
 <body>
 <div id="preloader">

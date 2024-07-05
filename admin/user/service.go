@@ -3,7 +3,6 @@ package user
 import (
 	"errors"
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/log"
 	"github.com/daodao97/goadmin/pkg/sso"
 	"github.com/daodao97/goadmin/pkg/util"
 	"github.com/spf13/cast"
@@ -268,12 +267,10 @@ func (s *service) Login(ctx *gin.Context) (*LoginRes, error) {
 		}
 	} else {
 		if exist, err := s.UserState.ExistCaptcha(ctx, strings.ToLower(req.Captcha)); err != nil || !exist {
-			log.Warn("login fail ExistCaptcha err(%+v), exist(%t)", err, exist)
 			return nil, fmt.Errorf("验证码错误或已过期")
 		}
 		md5 := LoginMD5(req.Username, req.Password, strings.ToLower(req.Captcha))
 		if md5 != req.Sing {
-			log.Warn("login fail md5(%s), req(%s)", md5, req.Sing)
 			return nil, fmt.Errorf("校验错误")
 		}
 
@@ -358,7 +355,7 @@ func (s *service) UpdatePwd(ctx *gin.Context) error {
 	}
 
 	m := s.GetModel(ctx)
-	_, err = m.Update(map[string]interface{}{"password": hash}, db.WhereEq("id", id))
+	_, err = m.Update(map[string]interface{}{"password": string(hash)}, db.WhereEq("id", id))
 	if err != nil {
 		return err
 	}

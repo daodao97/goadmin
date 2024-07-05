@@ -2,8 +2,8 @@ package scaffold
 
 import (
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/log"
 	"github.com/daodao97/goadmin/pkg/util"
+	"github.com/daodao97/xgo/xlog"
 	"github.com/pkg/errors"
 	"time"
 
@@ -55,14 +55,13 @@ func (c Conf) Validate() error {
 		if !util.String(c.HttpServer.WebPath).StartWith("/") {
 			return fmt.Errorf(errTpl, "HttpServer.webPath nust start with `/` ")
 		}
-		c.HttpServer.BasePath = "/api"
 	}
 
 	if c.Jwt == nil {
 		return fmt.Errorf(errTpl, "Jwt is required")
 	}
 	if c.Jwt.Secret == "{token_secret}" {
-		log.Warn("Place change Jwt.Secret = {token_secret} in your application.toml")
+		xlog.Warn("Place change Jwt.Secret = {token_secret} in your application.toml")
 	}
 
 	c.Jwt.OpenApi = append(c.Jwt.OpenApi, []string{

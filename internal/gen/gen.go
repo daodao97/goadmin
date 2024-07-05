@@ -16,7 +16,7 @@ type TmplVars struct {
 }
 
 func Install(projectPath string, data *TmplVars) error {
-	tfs, err := fs.Sub(t, "service")
+	tfs, err := fs.Sub(t, "admin")
 	if err != nil {
 		return err
 	}

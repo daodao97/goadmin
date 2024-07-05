@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/daodao97/goadmin/pkg/log"
 	"github.com/daodao97/goadmin/scaffold/dao"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
@@ -82,7 +81,6 @@ func (c *ctrl) RoutesSE(ctx *gin.Context) {
 func (c *ctrl) Captcha(ctx *gin.Context) {
 	captchaText := GetRandStr(4)
 	if err := c.service.UserState.SetCaptcha(ctx, strings.ToLower(captchaText)); err != nil {
-		log.Error("Captcha err(%+v)", err) // login校验不会通过了
 		return
 	}
 	ctx.Render(http.StatusOK, render.Data{

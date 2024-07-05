@@ -4,7 +4,7 @@ import (
 	"flag"
 	"time"
 
-	"github.com/daodao97/goadmin/pkg/log"
+	"github.com/daodao97/xgo/xlog"
 	{{- if .DriverMysql }}
 	_ "github.com/go-sql-driver/mysql"
 	{{ end -}}
@@ -28,7 +28,7 @@ func main() {
 
 	for range exit {
 		closeFunc()
-		log.Info("admin exit")
+		xlog.Info("admin exit")
 		time.Sleep(time.Second)
 		return
 	}

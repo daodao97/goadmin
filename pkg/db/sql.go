@@ -563,7 +563,7 @@ func SelectBuilder(opts ...Option) (sql string, args []interface{}) {
 
 	if _opts.limit != 0 {
 		sql = sql + " limit ? offset ?"
-		args = append(args, _opts.offset, _opts.limit)
+		args = append(args, _opts.limit, _opts.offset)
 	}
 
 	return convertPlaceholders(sql), args

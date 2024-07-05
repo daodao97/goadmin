@@ -1,6 +1,7 @@
 package app
 
 import (
+	"admin/internal/conf"
 	"github.com/daodao97/goadmin/pkg/cache"
 	"github.com/daodao97/goadmin/pkg/sso"
 	"os"
@@ -15,7 +16,7 @@ import (
 )
 
 var Provider = wire.NewSet(
-	NewConf, NewHttpServer, NewApp, wire.Struct(new(HttpOptions), "*"),
+	NewHttpServer, NewApp, wire.Struct(new(HttpOptions), "*"),
 	NewCache, NewUploader, NewScaffoldConf, NewSso,
 )
 
@@ -36,7 +37,7 @@ func (a *App) Start() (<-chan os.Signal, error) {
 	return c, nil
 }
 
-func NewCache(c *Conf) cache.Cache {
+func NewCache(c *conf.Conf) cache.Cache {
 	{{- if .DriverMysql }}
 	return cache.NewRedisCache(c.Redis)
 	{{- end }}
@@ -45,7 +46,7 @@ func NewCache(c *Conf) cache.Cache {
     {{- end }}
 }
 
-func NewUploader(c *Conf) uploader.Uploader {
+func NewUploader(c *conf.Conf) uploader.Uploader {
 	// 根据情况选择不同的 Uploader
 	return uploader.NewLocalUploader(
 		"./uploads",
@@ -54,7 +55,7 @@ func NewUploader(c *Conf) uploader.Uploader {
 	)
 }
 
-func NewScaffoldConf(c *Conf) (*scaffold.Conf, error) {
+func NewScaffoldConf(c *conf.Conf) (*scaffold.Conf, error) {
 	cf := &scaffold.Conf{}
 	err := copier.Copy(cf, c)
 	if err != nil {
