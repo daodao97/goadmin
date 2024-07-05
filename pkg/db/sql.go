@@ -562,7 +562,7 @@ func SelectBuilder(opts ...Option) (sql string, args []interface{}) {
 	}
 
 	if _opts.limit != 0 {
-		sql = sql + " offset ? limit ? "
+		sql = sql + " limit ? offset ?"
 		args = append(args, _opts.offset, _opts.limit)
 	}
 
