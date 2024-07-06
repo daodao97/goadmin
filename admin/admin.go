@@ -8,12 +8,18 @@ import (
 	"github.com/daodao97/goadmin/scaffold"
 )
 
-func New(s scaffold.Scaffold) []scaffold.Ctrl {
+func New() (routes []scaffold.GinRoute) {
+	s := scaffold.GetScaffold()
 	ctrl := []scaffold.Ctrl{
 		role.NewCtrl(s),
 		user.NewCtrl(s),
 		menu.NewCtrl(s),
 		cconf.NewCtrl(s),
 	}
-	return ctrl
+
+	for _, r := range ctrl {
+		routes = append(routes, r.Route)
+	}
+
+	return
 }

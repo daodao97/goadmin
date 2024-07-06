@@ -1,10 +1,12 @@
 package main
 
 import (
+	"admin/internal/admin"
+	"admin/internal/api"
+	"admin/internal/conf"
 	"flag"
-	"time"
-
-	"github.com/daodao97/xgo/xlog"
+	"github.com/daodao97/goadmin/scaffold"
+	"github.com/daodao97/xgo/xhttp"
 	{{- if .DriverMysql }}
 	_ "github.com/go-sql-driver/mysql"
 	{{ end -}}
@@ -12,24 +14,24 @@ import (
     _ "github.com/mattn/go-sqlite3"
     {{ end -}}
 	_ "go.uber.org/automaxprocs"
+	"time"
 )
 
 func main() {
 	flag.Parse()
-	app, closeFunc, err := initApp()
+
+	err := conf.Startup()
 	if err != nil {
 		panic(err)
 	}
 
-	exit, err := app.Start()
-	if err != nil {
-		panic(err)
-	}
+	e := scaffold.NewEngine2(&scaffold.EngineOption{
+		Conf: conf.GetScaffoldConf(),
+	})
 
-	for range exit {
-		closeFunc()
-		xlog.Info("admin exit")
-		time.Sleep(time.Second)
-		return
-	}
+	routes := admin.NewRoute()
+	routes = append(routes, api.Route)
+	scaffold.RegRoute(e, routes)
+
+	xhttp.StartServer(e, conf.Get().HttpServer.Addr, time.Second*30)
 }

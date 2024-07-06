@@ -33,6 +33,12 @@ type Options struct {
 	Sso       *sso.Sso
 }
 
+var scaffold Scaffold
+
+func GetScaffold() Scaffold {
+	return scaffold
+}
+
 // New 返回脚手架实例
 func New(opt *Options) Scaffold {
 	_validator := util.NewValidate()
@@ -41,7 +47,7 @@ func New(opt *Options) Scaffold {
 	commonConf := NewCommonConfig(opt.Cache)
 	schemaPool := NewSchemaPool(commonConf)
 
-	return Scaffold{
+	scaffold = Scaffold{
 		Conf:       opt.Conf,
 		Sso:        opt.Sso,
 		schemaPool: schemaPool,
@@ -55,6 +61,8 @@ func New(opt *Options) Scaffold {
 		CommonConf:   commonConf,
 		columnRender: map[string]func(ctx *gin.Context, rows []dao.Row) []dao.Row{},
 	}
+
+	return scaffold
 }
 
 // Scaffold 数据库对象的 crud 脚手架

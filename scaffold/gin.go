@@ -6,10 +6,14 @@ import (
 	"github.com/daodao97/goadmin/pkg/cache"
 	"github.com/daodao97/goadmin/pkg/db"
 	"github.com/daodao97/goadmin/pkg/ecode"
+	"github.com/daodao97/goadmin/pkg/sso"
 	"github.com/daodao97/goadmin/pkg/util"
 	"github.com/daodao97/goadmin/pkg/util/uploader"
 	"github.com/pkg/errors"
+	sloggin "github.com/samber/slog-gin"
 	"github.com/spf13/cast"
+	"log/slog"
+	"os"
 	"strings"
 	"time"
 
@@ -21,11 +25,56 @@ const (
 	typeSvga = "svga"
 )
 
+type GinRoute = func(e *gin.Engine)
+
+func RegRoute(e *gin.Engine, routes []GinRoute) {
+	for _, route := range routes {
+		route(e)
+	}
+}
+
+type EngineOption struct {
+	Conf     *Conf
+	Uploader uploader.Uploader
+	Cache    cache.Cache
+	Sso      *sso.Sso
+}
+
+func NewEngine2(opt *EngineOption) *gin.Engine {
+	if opt.Sso == nil {
+		opt.Sso = &map[sso.Name]sso.SSO{}
+	}
+	if opt.Cache == nil {
+		opt.Cache = cache.NewMemoryCache()
+	}
+
+	if opt.Uploader == nil {
+		opt.Uploader = uploader.NewLocalUploader(
+			"./uploads",
+			"ok/{year}{month}{day}-{hour}{minute}{second}-{random}{.suffix}",
+			"http://127.0.0.1:8001",
+		)
+	}
+
+	us, _ := NewUserState(opt.Cache, opt.Conf)
+
+	s := New(&Options{
+		Conf:      opt.Conf,
+		UserState: us,
+		Cache:     opt.Cache,
+		Sso:       opt.Sso,
+	})
+
+	return NewEngine(opt.Conf, opt.Uploader, us, s)
+}
+
 func NewEngine(c *Conf, up uploader.Uploader, user *UserState, s Scaffold) *gin.Engine {
+	e := gin.Default()
 	if util.IsProd() {
 		gin.SetMode(gin.ReleaseMode)
+		logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+		e.Use(sloggin.New(logger))
 	}
-	e := gin.Default()
 	if c.HttpServer.WebPath != "" {
 		e.Use(front.ModifyIndexHTML(c.HttpServer.WebPath, map[string]any{
 			"basePath": c.HttpServer.BasePath,

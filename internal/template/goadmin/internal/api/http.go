@@ -1,11 +1,10 @@
 package api
 
 import (
-	"admin/internal/conf"
 	"github.com/gin-gonic/gin"
 )
 
-func Route(e *gin.Engine, conf *conf.Conf) {
+func Route(e *gin.Engine) {
 	g := e.Group("/api")
 
 	collection := g.Group("/collection")

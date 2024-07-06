@@ -1,26 +1,24 @@
 package admin
 
 import (
-	"admin/internal/conf"
-	"github.com/google/wire"
-
 	"github.com/daodao97/goadmin/admin"
 	"github.com/daodao97/goadmin/scaffold"
+	"github.com/gin-gonic/gin"
 )
 
-var Provider = wire.NewSet(NewCtrl, wire.Struct(new(CtrlOptions), "*"))
-
-type CtrlOptions struct {
-	Scaffold scaffold.Scaffold
-	Conf     *conf.Conf
-}
-
-// NewCtrl 向外导出所有的 http路由 服务
-func NewCtrl(opt *CtrlOptions) (ctrl []scaffold.Ctrl, cf func(), err error) {
+func ctrls() (routes []scaffold.GinRoute) {
 	// 系统管理相关服务
-	ctrl = admin.New(opt.Scaffold)
+	routes = admin.New()
+
 	// 在此处注册业务的 Ctrl
 
-	cf = func() {}
-	return ctrl, cf, nil
+	return routes
+}
+
+func NewRoute() (r []func(e *gin.Engine)) {
+	for _, ctrl := range ctrls() {
+		r = append(r, ctrl)
+	}
+
+	return r
 }
