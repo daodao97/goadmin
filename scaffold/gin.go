@@ -40,7 +40,7 @@ type EngineOption struct {
 	Sso      *sso.Sso
 }
 
-func NewEngine2(opt *EngineOption) *gin.Engine {
+func NewEngine(opt *EngineOption) *gin.Engine {
 	if opt.Sso == nil {
 		opt.Sso = &map[sso.Name]sso.SSO{}
 	}
@@ -65,10 +65,10 @@ func NewEngine2(opt *EngineOption) *gin.Engine {
 		Sso:       opt.Sso,
 	})
 
-	return NewEngine(opt.Conf, opt.Uploader, us, s)
-}
+	c := opt.Conf
+	user := us
+	up := opt.Uploader
 
-func NewEngine(c *Conf, up uploader.Uploader, user *UserState, s Scaffold) *gin.Engine {
 	e := gin.Default()
 	if util.IsProd() {
 		gin.SetMode(gin.ReleaseMode)
@@ -88,6 +88,7 @@ func NewEngine(c *Conf, up uploader.Uploader, user *UserState, s Scaffold) *gin.
 	root.Any("/proxy/:path", proxy)
 	root.GET("/schema/*route", schemaByRoute(s))
 	root.GET("/form_mutex", formMutex(s))
+
 	return e
 }
 
