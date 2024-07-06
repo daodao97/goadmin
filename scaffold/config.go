@@ -45,7 +45,7 @@ func (c Conf) Validate() error {
 		return fmt.Errorf(errTpl, "HttpServer is required")
 	}
 	if c.HttpServer.BasePath == "" {
-		c.HttpServer.BasePath = "/"
+		c.HttpServer.BasePath = "/_api"
 	}
 
 	if c.HttpServer.WebPath != "" {
