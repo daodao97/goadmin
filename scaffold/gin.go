@@ -9,11 +9,10 @@ import (
 	"github.com/daodao97/goadmin/pkg/sso"
 	"github.com/daodao97/goadmin/pkg/util"
 	"github.com/daodao97/goadmin/pkg/util/uploader"
+	"github.com/daodao97/xgo/xlog"
 	"github.com/pkg/errors"
-	sloggin "github.com/samber/slog-gin"
 	"github.com/spf13/cast"
 	"log/slog"
-	"os"
 	"strings"
 	"time"
 
@@ -69,12 +68,45 @@ func NewEngine(opt *EngineOption) *gin.Engine {
 	user := us
 	up := opt.Uploader
 
-	e := gin.Default()
 	if util.IsProd() {
 		gin.SetMode(gin.ReleaseMode)
-		logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-		e.Use(sloggin.New(logger))
 	}
+
+	logger := xlog.GetLogger()
+
+	// 创建一个自定义的 SlogWriter
+	slogWriter := SlogWriter{logger: logger}
+
+	// 设置 gin 使用自定义的日志记录器
+	gin.DefaultWriter = slogWriter
+	gin.DefaultErrorWriter = slogWriter
+
+	e := gin.New()
+
+	// 使用自定义的日志中间件
+	e.Use(func(c *gin.Context) {
+		// 开始时间
+		start := time.Now()
+
+		// 处理请求
+		c.Next()
+
+		// 结束时间
+		end := time.Now()
+		latency := end.Sub(start)
+
+		// 使用 slog 记录结构化日志
+		logger.Info("HTTP Request",
+			slog.String("client_ip", c.ClientIP()),
+			slog.String("time", end.Format(time.RFC1123)),
+			slog.Int("status_code", c.Writer.Status()),
+			slog.String("latency", latency.String()),
+			slog.String("method", c.Request.Method),
+			slog.String("path", c.Request.URL.Path),
+			slog.String("error_message", c.Errors.ByType(gin.ErrorTypePrivate).String()),
+		)
+	}, gin.Recovery())
+
 	if c.HttpServer.WebPath != "" {
 		e.Use(front.ModifyIndexHTML(c.HttpServer.WebPath, map[string]any{
 			"basePath": c.HttpServer.BasePath,
@@ -197,4 +229,13 @@ func proxy(ctx *gin.Context) {
 
 func ping(ctx *gin.Context) {
 	Response(ctx, "pong", nil)
+}
+
+type SlogWriter struct {
+	logger *slog.Logger
+}
+
+func (w SlogWriter) Write(p []byte) (n int, err error) {
+	w.logger.Info(string(p))
+	return len(p), nil
 }

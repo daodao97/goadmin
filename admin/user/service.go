@@ -279,9 +279,18 @@ func (s *service) Login(ctx *gin.Context) (*LoginRes, error) {
 		}
 		m := s.GetModel(ctx)
 		row = m.SelectOne(opts...)
-		if row.Err != nil && !errors.Is(row.Err, db.ErrNotFound) {
-			return nil, row.Err
+
+		if row.Err != nil && errors.Is(row.Err, db.ErrNotFound) {
+			return nil, fmt.Errorf("something is error")
 		}
+
+		if row.Err != nil {
+			return nil, fmt.Errorf("something is error")
+		}
+
+		hash, _ := bcrypt.GenerateFromPassword([]byte(cast.ToString(row.Data["password"])), bcrypt.DefaultCost)
+		fmt.Println(row, string(hash))
+
 		err := bcrypt.CompareHashAndPassword([]byte(cast.ToString(row.Data["password"])), []byte(req.Password))
 		if err != nil {
 			return nil, fmt.Errorf("密码错误")
