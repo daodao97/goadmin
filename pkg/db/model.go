@@ -214,8 +214,16 @@ func (m *model) Insert(record Record) (lastId int64, err error) {
 
 	kv = append(kv, "sql", _sql, "args", vs)
 
-	err = m.client.QueryRow(_sql, args...).Scan(&lastId)
-	//result, err := exec(m.client, _sql, args...)
+	if m.config.Driver == "postgres" {
+		err = m.client.QueryRow(_sql, args...).Scan(&lastId)
+	} else {
+		result, err := exec(m.client, _sql, args...)
+		if err != nil {
+			return 0, err
+		}
+		return result.LastInsertId()
+	}
+
 	if err != nil {
 		return 0, err
 	}
