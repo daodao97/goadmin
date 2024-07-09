@@ -1,6 +1,7 @@
 package scaffold
 
 import (
+	"github.com/daodao97/goadmin/pkg/db"
 	"github.com/gin-gonic/gin"
 	"path/filepath"
 )
@@ -43,7 +44,17 @@ func (c *FullCtrl) Conf() *Conf {
 }
 
 func (c *FullCtrl) RegRoute(e *gin.Engine) *gin.RouterGroup {
-	return RouteGroup(e, c.routeGroup, c, c.Conf())
+	return RouteGroup(e, c.routeGroup, c, c.Conf(), func(ctx *gin.Context) {
+		if c.routeGroup != ":table_name" {
+			ctx.Next()
+			return
+		}
+		tableName := ctx.Param("table_name")
+
+		c.service.SetModel(db.New(tableName))
+
+		ctx.Next()
+	})
 }
 
 func (c *FullCtrl) Route(e *gin.Engine) {
