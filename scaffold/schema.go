@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/util"
+
 	"github.com/spf13/cast"
+
+	"github.com/daodao97/goadmin/pkg/util"
 
 	"github.com/daodao97/goadmin/pkg/db"
 )
@@ -253,25 +255,23 @@ func getSchemaByRoute(route string, macro map[string]interface{}) (string, error
 	if row.Err != nil {
 		return "", row.Err
 	}
-	if row != nil {
-		var ownerNames []string
-		ownerIds, _ := util.ToInterfaceSlice(row.Data["owner_ids"])
-		if len(ownerIds) > 0 {
-			ul := NewUser().Select(db.WhereIn("id", ownerIds))
-			for _, v := range ul.List {
-				ownerNames = append(ownerNames, cast.ToString(v.Data["nickname"]))
-			}
+	var ownerNames []string
+	ownerIds, _ := util.ToInterfaceSlice(row.Data["owner_ids"])
+	if len(ownerIds) > 0 {
+		ul := NewUser().Select(db.WhereIn("id", ownerIds))
+		for _, v := range ul.List {
+			ownerNames = append(ownerNames, cast.ToString(v.Data["nickname"]))
 		}
-		if schema, ok := row.Data["page_schema"].(*map[string]interface{}); ok {
-			(*schema)["ownerNames"] = ownerNames
-			_schema := util.JsonStrVarReplace(util.ToString(*schema), macro)
-			return _schema, nil
-		}
-		if schema, ok := row.Data["page_schema"].(*[]interface{}); ok {
-			//_schema := util.JsonStrVarReplace(util.ToString(*schema), macro)
-			str, err := json.Marshal(schema)
-			return string(str), err
-		}
+	}
+	if schema, ok := row.Data["page_schema"].(*map[string]interface{}); ok {
+		(*schema)["ownerNames"] = ownerNames
+		_schema := util.JsonStrVarReplace(util.ToString(*schema), macro)
+		return _schema, nil
+	}
+	if schema, ok := row.Data["page_schema"].(*[]interface{}); ok {
+		//_schema := util.JsonStrVarReplace(util.ToString(*schema), macro)
+		str, err := json.Marshal(schema)
+		return string(str), err
 	}
 
 	return "", fmt.Errorf("not found %s schema", route)

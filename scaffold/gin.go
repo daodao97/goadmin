@@ -2,6 +2,14 @@ package scaffold
 
 import (
 	"fmt"
+	"log/slog"
+	"strings"
+	"time"
+
+	"github.com/daodao97/xgo/xlog"
+	"github.com/pkg/errors"
+	"github.com/spf13/cast"
+
 	"github.com/daodao97/goadmin/internal/front"
 	"github.com/daodao97/goadmin/pkg/cache"
 	"github.com/daodao97/goadmin/pkg/db"
@@ -9,12 +17,6 @@ import (
 	"github.com/daodao97/goadmin/pkg/sso"
 	"github.com/daodao97/goadmin/pkg/util"
 	"github.com/daodao97/goadmin/pkg/util/uploader"
-	"github.com/daodao97/xgo/xlog"
-	"github.com/pkg/errors"
-	"github.com/spf13/cast"
-	"log/slog"
-	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -84,7 +86,7 @@ func NewEngine(opt *EngineOption) *gin.Engine {
 	e := gin.New()
 
 	// 使用自定义的日志中间件
-	e.Use(func(c *gin.Context) {
+	e.Use(Cors(), func(c *gin.Context) {
 		// 开始时间
 		start := time.Now()
 

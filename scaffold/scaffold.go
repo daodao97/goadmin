@@ -4,27 +4,26 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
+	"os"
+	"strings"
+
+	"github.com/daodao97/xgo/xlog"
+
 	"github.com/daodao97/goadmin/pkg/cache"
 	"github.com/daodao97/goadmin/pkg/ecode"
 	"github.com/daodao97/goadmin/pkg/sso"
 	"github.com/daodao97/goadmin/pkg/util"
 	"github.com/daodao97/goadmin/scaffold/dao"
-	"github.com/daodao97/xgo/xlog"
-	"io/ioutil"
-	"os"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/google/wire"
 	"github.com/siddontang/go/num"
 	"github.com/spf13/cast"
 	"github.com/tidwall/gjson"
 
 	"github.com/daodao97/goadmin/pkg/db"
 )
-
-var Provider = wire.NewSet(NewUserState, wire.Struct(new(Options), "*"), New)
 
 type Options struct {
 	Conf      *Conf      // 脚手架依赖配置
@@ -65,6 +64,16 @@ func New(opt *Options) Scaffold {
 	return scaffold
 }
 
+type BeforeCrete func(ctx *gin.Context, val dao.Row) (dao.Row, error)
+type BeforeUpdate func(ctx *gin.Context, val dao.Row, id int64) (dao.Row, error)
+type AfterCreate func(ctx *gin.Context, val dao.Row, id int64) error
+type AfterUpdate func(ctx *gin.Context, val dao.Row, id int64) error
+type BeforeList func(ctx *gin.Context, where []dao.Option) []dao.Option
+type AfterList func(ctx *gin.Context, list []dao.Row) []dao.Row
+type BeforeGet func(ctx *gin.Context, val dao.Row) dao.Row
+type AfterGet func(ctx *gin.Context, val dao.Row) dao.Row
+type AfterDel func(ctx *gin.Context, id []int64) error
+
 // Scaffold 数据库对象的 crud 脚手架
 type Scaffold struct {
 	Conf         *Conf
@@ -73,21 +82,22 @@ type Scaffold struct {
 	TreeList     *TreeList
 	Token        *Token
 	schemaPool   *SchemaPool
+	schema       *Schema
 	validator    *util.Validate
 	UserState    *UserState
 	dao          dao.Dao  // 抽象后的数据层对象, 底层可能为 mysql/es/mongo/api 等等
 	model        db.Model // mysql 数据对象, 当 dao==nil 是用此实例
 	CommonConf   *CommonConf
 	columnRender map[string]func(ctx *gin.Context, rows []dao.Row) []dao.Row
-	BeforeCreate func(ctx *gin.Context, val dao.Row) (dao.Row, error)
-	BeforeUpdate func(ctx *gin.Context, val dao.Row, id int64) (dao.Row, error)
-	AfterCreate  func(ctx *gin.Context, val dao.Row, id int64) error
-	AfterUpdate  func(ctx *gin.Context, val dao.Row, id int64) error
-	BeforeList   func(ctx *gin.Context, where []dao.Option) []dao.Option
-	AfterList    func(ctx *gin.Context, list []dao.Row) []dao.Row
-	BeforeGet    func(ctx *gin.Context, val dao.Row) dao.Row
-	AfterGet     func(ctx *gin.Context, val dao.Row) dao.Row
-	AfterDel     func(ctx *gin.Context, id []int64) error
+	BeforeCreate BeforeCrete
+	BeforeUpdate BeforeUpdate
+	AfterCreate  AfterCreate
+	AfterUpdate  AfterUpdate
+	BeforeList   BeforeList
+	AfterList    AfterList
+	BeforeGet    BeforeGet
+	AfterGet     AfterGet
+	AfterDel     AfterDel
 }
 
 func (s *Scaffold) User(ctx *gin.Context) (*UserAttr, error) {
@@ -155,11 +165,11 @@ func (s *Scaffold) RequestBody(ctx *gin.Context) (util.MapStrInterface, error) {
 	input := make(map[string]interface{})
 	ctype := ctx.Request.Header.Get("Content-Type")
 	if strings.Contains(ctype, binding.MIMEJSON) {
-		body, err := ioutil.ReadAll(ctx.Request.Body)
+		body, err := io.ReadAll(ctx.Request.Body)
 		if err != nil {
 			return nil, err
 		}
-		rdr := ioutil.NopCloser(bytes.NewBuffer(body))
+		rdr := io.NopCloser(bytes.NewBuffer(body))
 		ctx.Request.Body = rdr
 		_ = util.Binding(body, &input)
 	} else {
@@ -719,6 +729,10 @@ func (s *Scaffold) Del(ctx *gin.Context) (bool, error) {
 
 func (s *Scaffold) currentPath(ctx *gin.Context) string {
 	return ctx.Request.Header.Get("x-path")
+}
+
+func (s *Scaffold) SetSchema(schema *Schema) {
+	s.schema = schema
 }
 
 // getSchema 对外输出当前路由自定解析的 path 结构化的 Schema 数据
