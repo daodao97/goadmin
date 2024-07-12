@@ -2,10 +2,11 @@ package scaffold
 
 import (
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/util"
-	"github.com/daodao97/goadmin/scaffold/dao"
 	"regexp"
 	"strings"
+
+	"github.com/daodao97/goadmin/pkg/util"
+	"github.com/daodao97/goadmin/scaffold/dao"
 
 	"github.com/spf13/cast"
 
@@ -110,9 +111,6 @@ func HasManyData(hasStr string, key string, list []dao.Row) (newList []dao.Row, 
 		return nil, err
 	}
 	model := db.New(opt.Table, db.WithConn(opt.Pool))
-	if err != nil {
-		return nil, err
-	}
 	fields := append(opt.OtherKeys, opt.ForeignKey)
 	var ids []interface{}
 	for _, v := range list {

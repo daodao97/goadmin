@@ -44,7 +44,7 @@ type model struct {
 	err             error
 }
 
-func New(table string, baseOpt ...With) *model {
+func New(table string, baseOpt ...With) Model {
 	m := &model{
 		connection: "default",
 		primaryKey: "id",

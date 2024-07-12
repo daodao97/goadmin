@@ -82,7 +82,7 @@ type Scaffold struct {
 	TreeList     *TreeList
 	Token        *Token
 	schemaPool   *SchemaPool
-	schema       *Schema
+	schema       string
 	validator    *util.Validate
 	UserState    *UserState
 	dao          dao.Dao  // 抽象后的数据层对象, 底层可能为 mysql/es/mongo/api 等等
@@ -731,12 +731,20 @@ func (s *Scaffold) currentPath(ctx *gin.Context) string {
 	return ctx.Request.Header.Get("x-path")
 }
 
-func (s *Scaffold) SetSchema(schema *Schema) {
+func (s *Scaffold) SetSchema(schema string) {
 	s.schema = schema
 }
 
 // getSchema 对外输出当前路由自定解析的 path 结构化的 Schema 数据
 func (s *Scaffold) getSchema(ctx *gin.Context) (*Schema, error) {
+	if s.schema != "" {
+		var sch = new(Schema)
+		err := util.Binding(s.schema, sch)
+		if err != nil {
+			return nil, err
+		}
+		return sch, nil
+	}
 	project := s.currentPath(ctx)
 	sch, err := s.schemaPool.GetSchema(project)
 	if err != nil {
@@ -746,7 +754,15 @@ func (s *Scaffold) getSchema(ctx *gin.Context) (*Schema, error) {
 }
 
 // GetSchemaByRoute 对外输出指定path全量的 page_schema 数据
-func (s *Scaffold) GetSchemaByRoute(ctx *gin.Context, route string) (interface{}, error) {
+func (s *Scaffold) GetSchemaByRoute(ctx *gin.Context, route string) (any, error) {
+	if s.schema != "" {
+		var sch = new(any)
+		err := util.Binding(s.schema, sch)
+		if err != nil {
+			return nil, err
+		}
+		return sch, nil
+	}
 	sch, ok := s.schemaPool.Get(route)
 	if !ok {
 		return nil, fmt.Errorf("未找到响应页面的PageSchema 或 页面未启用 id:%s", route)
