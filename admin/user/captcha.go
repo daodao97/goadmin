@@ -3,7 +3,6 @@ package user
 import (
 	"bytes"
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/util"
 	"image"
 	"image/color"
 	"image/png"
@@ -11,6 +10,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/daodao97/goadmin/pkg/util"
 
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype"

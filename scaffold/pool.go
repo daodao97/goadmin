@@ -2,9 +2,10 @@ package scaffold
 
 import (
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/util"
 	"strings"
 	"time"
+
+	"github.com/daodao97/goadmin/pkg/util"
 )
 
 func filterByEnv(data, envIdent string) string { //nolint:gocognit

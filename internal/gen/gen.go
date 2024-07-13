@@ -2,8 +2,9 @@ package gen
 
 import (
 	"embed"
-	"github.com/leaanthony/gosod"
 	"io/fs"
+
+	"github.com/leaanthony/gosod"
 )
 
 //go:embed service

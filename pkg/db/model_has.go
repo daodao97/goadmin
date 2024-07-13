@@ -1,9 +1,10 @@
 package db
 
 import (
-	"github.com/daodao97/xgo/xlog"
 	"regexp"
 	"strings"
+
+	"github.com/daodao97/xgo/xlog"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"

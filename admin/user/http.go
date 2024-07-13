@@ -1,11 +1,13 @@
 package user
 
 import (
-	"github.com/daodao97/goadmin/scaffold/dao"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/render"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/render"
+
+	"github.com/daodao97/goadmin/scaffold/dao"
 
 	"github.com/daodao97/goadmin/scaffold"
 )

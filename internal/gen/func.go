@@ -2,15 +2,17 @@ package gen
 
 import (
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/db"
-	"github.com/manifoldco/promptui"
-	"github.com/spf13/cast"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/manifoldco/promptui"
+	"github.com/spf13/cast"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+
+	"github.com/daodao97/goadmin/pkg/db"
 )
 
 func findApplicationTomlPath() (string, error) {

@@ -1,9 +1,10 @@
 package admin
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"github.com/daodao97/goadmin/admin"
 	"github.com/daodao97/goadmin/scaffold"
-	"github.com/gin-gonic/gin"
 )
 
 func ctrls() (routes []scaffold.GinRoute) {

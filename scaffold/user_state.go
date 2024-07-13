@@ -3,11 +3,13 @@ package scaffold
 import (
 	"context"
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/cache"
-	"github.com/daodao97/goadmin/pkg/util"
-	"github.com/pkg/errors"
 	"net/http"
 	"time"
+
+	"github.com/pkg/errors"
+
+	"github.com/daodao97/goadmin/pkg/cache"
+	"github.com/daodao97/goadmin/pkg/util"
 
 	"github.com/daodao97/goadmin/pkg/db"
 )

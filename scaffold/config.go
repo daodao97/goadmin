@@ -2,13 +2,15 @@ package scaffold
 
 import (
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/util"
-	"github.com/daodao97/xgo/xlog"
-	"github.com/pkg/errors"
+	"path/filepath"
 	"time"
 
+	"github.com/daodao97/xgo/xlog"
+	"github.com/pkg/errors"
+
+	"github.com/daodao97/goadmin/pkg/util"
+
 	"github.com/daodao97/goadmin/pkg/db"
-	"path/filepath"
 )
 
 type DBConf struct {

@@ -2,10 +2,11 @@ package template
 
 import (
 	"embed"
-	"github.com/leaanthony/gosod"
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	"github.com/leaanthony/gosod"
 )
 
 //go:embed goadmin

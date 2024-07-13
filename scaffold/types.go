@@ -2,6 +2,7 @@ package scaffold
 
 import (
 	"encoding/json"
+
 	"github.com/daodao97/goadmin/scaffold/dao"
 )
 

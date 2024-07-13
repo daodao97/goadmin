@@ -2,13 +2,15 @@ package conf
 
 import (
 	"flag"
-	"github.com/BurntSushi/toml"
-	"github.com/daodao97/goadmin/pkg/db"
-	"github.com/daodao97/goadmin/scaffold"
-	"github.com/go-redis/redis/v8"
-	"github.com/jinzhu/copier"
 	"log"
 	"os"
+
+	"github.com/BurntSushi/toml"
+	"github.com/go-redis/redis/v8"
+	"github.com/jinzhu/copier"
+
+	"github.com/daodao97/goadmin/pkg/db"
+	"github.com/daodao97/goadmin/scaffold"
 )
 
 var configFile = flag.String("c", "application.toml", "application config file")

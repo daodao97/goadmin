@@ -1,9 +1,10 @@
 package db
 
 import (
+	"time"
+
 	"github.com/daodao97/xgo/xlog"
 	"github.com/spf13/cast"
-	"time"
 )
 
 func Info(msg string, kv ...interface{}) {

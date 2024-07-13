@@ -1,9 +1,11 @@
 package scaffold
 
 import (
-	"github.com/daodao97/goadmin/pkg/db"
-	"github.com/gin-gonic/gin"
 	"path/filepath"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/daodao97/goadmin/pkg/db"
 )
 
 // Ctrl 控制器接口

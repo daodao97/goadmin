@@ -3,10 +3,11 @@ package front
 import (
 	"bytes"
 	"embed"
-	"github.com/gin-gonic/gin"
 	"html/template"
 	"io/fs"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 //go:embed static/*

@@ -3,8 +3,9 @@ package sso
 import (
 	"context"
 	"fmt"
-	"github.com/carlmjohnson/requests"
 	"time"
+
+	"github.com/carlmjohnson/requests"
 )
 
 const SsoGithub Name = "github"

@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/daodao97/goadmin/internal/gen"
-	"github.com/daodao97/goadmin/pkg/util"
-	"github.com/pkg/errors"
 	"os"
 	"path/filepath"
+
+	"github.com/pkg/errors"
+
+	"github.com/daodao97/goadmin/internal/gen"
+	"github.com/daodao97/goadmin/pkg/util"
 )
 
 type genArgs struct {

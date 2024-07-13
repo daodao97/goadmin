@@ -3,19 +3,22 @@ package user
 import (
 	"errors"
 	"fmt"
-	"github.com/daodao97/goadmin/pkg/sso"
-	"github.com/daodao97/goadmin/pkg/util"
-	"github.com/spf13/cast"
-	"golang.org/x/crypto/bcrypt"
 	"sort"
 	"strings"
 
+	"github.com/spf13/cast"
+	"golang.org/x/crypto/bcrypt"
+
+	"github.com/daodao97/goadmin/pkg/sso"
+	"github.com/daodao97/goadmin/pkg/util"
+
 	"github.com/gin-gonic/gin/binding"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/daodao97/goadmin/pkg/db"
 	"github.com/daodao97/goadmin/scaffold"
 	"github.com/daodao97/goadmin/scaffold/dao"
-	"github.com/gin-gonic/gin"
 )
 
 func newService(s *scaffold.Scaffold) *service {

@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/daodao97/goadmin/internal/template"
-	"github.com/daodao97/goadmin/pkg/util"
 	"os"
 	"path/filepath"
+
+	"github.com/daodao97/goadmin/internal/template"
+	"github.com/daodao97/goadmin/pkg/util"
 )
 
 type initArgs struct {

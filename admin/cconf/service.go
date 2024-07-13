@@ -1,10 +1,11 @@
 package cconf
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"github.com/daodao97/goadmin/pkg/db"
 	"github.com/daodao97/goadmin/scaffold"
 	"github.com/daodao97/goadmin/scaffold/dao"
-	"github.com/gin-gonic/gin"
 )
 
 func newService(s *scaffold.Scaffold) *service {

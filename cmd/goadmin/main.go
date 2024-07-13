@@ -1,9 +1,10 @@
 package main
 
 import (
+	"os"
+
 	"github.com/leaanthony/clir"
 	"github.com/pterm/pterm"
-	"os"
 )
 
 func main() {

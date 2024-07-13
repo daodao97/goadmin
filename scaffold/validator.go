@@ -1,8 +1,9 @@
 package scaffold
 
 import (
-	"github.com/daodao97/goadmin/pkg/util"
 	"github.com/go-playground/validator/v10"
+
+	"github.com/daodao97/goadmin/pkg/util"
 
 	"github.com/daodao97/goadmin/pkg/db"
 )

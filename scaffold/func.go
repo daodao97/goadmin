@@ -1,9 +1,11 @@
 package scaffold
 
 import (
-	"github.com/daodao97/goadmin/pkg/ecode"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/daodao97/goadmin/pkg/ecode"
 )
 
 func RenderErrMsg(c *gin.Context, code int, msg string) {

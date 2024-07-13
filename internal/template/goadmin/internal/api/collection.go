@@ -1,11 +1,13 @@
 package api
 
 import (
-	"github.com/daodao97/goadmin/pkg/db"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/cast"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
+
+	"github.com/daodao97/goadmin/pkg/db"
 )
 
 func parseFilters(queryParams map[string][]string) []db.Option {

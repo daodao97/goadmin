@@ -3,12 +3,13 @@ package uploader
 import (
 	"context"
 	"fmt"
-	"github.com/qiniu/go-sdk/v7/auth"
-	"github.com/qiniu/go-sdk/v7/storage"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
 	"time"
+
+	"github.com/qiniu/go-sdk/v7/auth"
+	"github.com/qiniu/go-sdk/v7/storage"
 )
 
 type QiniuUploader struct {

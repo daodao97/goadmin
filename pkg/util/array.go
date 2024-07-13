@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
-	"strings"
 )
 
 type ArrStr []string

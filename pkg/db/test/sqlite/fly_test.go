@@ -1,9 +1,10 @@
 package sqlite
 
 import (
-	"github.com/daodao97/goadmin/pkg/db/interval/util"
 	"os"
 	"testing"
+
+	"github.com/daodao97/goadmin/pkg/db/interval/util"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
