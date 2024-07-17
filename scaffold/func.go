@@ -18,6 +18,10 @@ func RenderErrMsg(c *gin.Context, code int, msg string) {
 
 func Response(ctx *gin.Context, res interface{}, err error) {
 	if err != nil {
+		if code, ok := ecode.FromError(err); ok {
+			RenderErrMsg(ctx, code.Code(), err.Error())
+			return
+		}
 		RenderErrMsg(ctx, ecode.ServerErr.Code(), err.Error())
 		return
 	}

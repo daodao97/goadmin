@@ -2,14 +2,67 @@ package db
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/spf13/cast"
+
+	"github.com/daodao97/goadmin/pkg/db/interval/util"
 )
 
 var ErrNotFound = errors.New("record not found")
 
-type Record = map[string]interface{}
+type Record map[string]interface{}
+
+func (r Record) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+func (r Record) Binding(dest interface{}) error {
+	if !util.AllowType(dest, []string{"*struct", "**struct"}) {
+		return ErrRowBindingType
+	}
+
+	return util.Binding(r, dest)
+}
+
+func (r Record) Get(key string) (interface{}, bool) {
+	v, ok := r[key]
+	return v, ok
+}
+
+func (r Record) GetString(key string) string {
+	v, ok := r[key]
+	if !ok {
+		return ""
+	}
+	return cast.ToString(v)
+}
+
+func (r Record) GetInt(key string) int {
+	v, ok := r[key]
+	if !ok {
+		return 0
+	}
+	return cast.ToInt(v)
+}
+
+func (r Record) GetArray(key string) []any {
+	v, ok := r[key]
+	if !ok {
+		return []any{}
+	}
+	return cast.ToSlice(v)
+}
+
+func (r Record) GetTime(key string) *time.Time {
+	v, ok := r[key]
+	if !ok {
+		return nil
+	}
+	return v.(*time.Time)
+}
 
 type Model interface {
 	PrimaryKey() string

@@ -89,7 +89,7 @@ func (m *mysqldao) SelectOne(ctx context.Context, opt ...Option) (Row, error) {
 }
 
 func (m *mysqldao) Insert(ctx context.Context, record Row) (int64, error) {
-	LastInsertId, err := m.model.Insert(record)
+	LastInsertId, err := m.model.Insert(db.Record(record))
 	if err != nil {
 		return 0, err
 	}
@@ -97,7 +97,7 @@ func (m *mysqldao) Insert(ctx context.Context, record Row) (int64, error) {
 }
 
 func (m *mysqldao) Update(ctx context.Context, record Row, opt ...Option) (bool, error) {
-	res, err := m.model.Update(record, m.transOptions(opt...)...)
+	res, err := m.model.Update(db.Record(record), m.transOptions(opt...)...)
 	if err != nil {
 		return false, err
 	}
