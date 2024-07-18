@@ -30,6 +30,12 @@ func WithPrimaryKey(name string) With {
 	}
 }
 
+func WithCacheKey(keys ...string) With {
+	return func(b *model) {
+		b.cacheKey = keys
+	}
+}
+
 func ColumnHook(columnHook ...Hook) With {
 	return func(b *model) {
 		if b.columnHook == nil {

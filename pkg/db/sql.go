@@ -590,6 +590,19 @@ func InsertBuilder(opts ...Option) (sql string, args []interface{}) {
 	return convertPlaceholders(sql), args
 }
 
+func HaveFieldInWhere(field string, opts ...Option) (any, bool) {
+	_opts := &Options{}
+	for _, v := range opts {
+		v(_opts)
+	}
+	for _, v := range _opts.where {
+		if field == v.field {
+			return v.value, true
+		}
+	}
+	return nil, false
+}
+
 func UpdateBuilder(opts ...Option) (sql string, args []interface{}) {
 	_opts := &Options{}
 	for _, v := range opts {

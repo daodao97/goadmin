@@ -1,19 +1,23 @@
 package db
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
 	"github.com/daodao97/xgo/xlog"
+	"github.com/spf13/cast"
 
 	"github.com/pkg/errors"
+
+	cache2 "github.com/daodao97/goadmin/pkg/cache"
 )
 
-func (m *model) cacheKeyPrefix(id int64) string {
-	return fmt.Sprintf("%s-%s-%d", m.connection, m.table, id)
+func (m *model) cacheKeyPrefix(id string) string {
+	return fmt.Sprintf("%s-%s-%s", m.connection, m.table, id)
 }
 
-func (m *model) FindBy(id int64) *Row {
+func (m *model) FindBy(id string) *Row {
 	if cache == nil {
 		return &Row{Err: errors.New("cache instance is nil")}
 	}
@@ -25,8 +29,8 @@ func (m *model) FindBy(id int64) *Row {
 
 	key := m.cacheKeyPrefix(id)
 
-	c, err := cache.Get(key)
-	if err != nil {
+	c, err := cache.Get(context.Background(), key)
+	if err != nil && !errors.Is(err, cache2.ErrNotFound) {
 		return &Row{Err: err}
 	}
 	if c != "" {
@@ -43,19 +47,21 @@ func (m *model) FindBy(id int64) *Row {
 	if row.Err == nil && row.Data != nil {
 		c, err := json.Marshal(row.Data)
 		if err != nil {
-			return &Row{Err: err}
+			xlog.Error("json marshal after FindBy id", xlog.Any("id", id), xlog.Err(err))
+			return row
 		}
-		err = cache.Set(key, string(c))
+		err = cache.Set(context.Background(), key, string(c))
 		if err != nil {
-			return &Row{Err: err}
+			xlog.Error("set key after FindBy id", xlog.Any("id", id), xlog.Err(err))
+		} else {
+			xlog.Debug("set key after FindBy id", xlog.Any("id", id))
 		}
-		Info("FindBy id:", id, "set cache", string(c))
 	}
 
 	return row
 }
 
-func (m *model) UpdateBy(id int64, record Record) (bool, error) {
+func (m *model) UpdateBy(id string, record Record) (bool, error) {
 	if cache == nil {
 		return false, errors.New("cache instance is nil")
 	}
@@ -64,11 +70,53 @@ func (m *model) UpdateBy(id int64, record Record) (bool, error) {
 		return false, err
 	}
 	key := m.cacheKeyPrefix(id)
-	err = cache.Del(key)
+	err = cache.Del(context.Background(), key)
 	if err != nil {
-		return false, err
+		xlog.Error("del key after UpdateBy id", xlog.Any("id", id), xlog.Err(err))
+	} else {
+		xlog.Debug("del key after UpdateBy id", xlog.Any("id", id))
 	}
-	xlog.Debug("del key after UpdateBy id", xlog.Any("id", id))
 
 	return true, nil
+}
+
+func (m *model) FindByKey(key string, val string) *Row {
+	if cache == nil {
+		return &Row{Err: errors.New("cache instance is nil")}
+	}
+
+	pk := m.PrimaryKey()
+	if pk == "" {
+		return &Row{Err: errors.New("primary is not defined")}
+	}
+
+	cacheKey := m.cacheKeyPrefix(val)
+
+	c, err := cache.Get(context.Background(), cacheKey)
+	if err != nil && !errors.Is(err, cache2.ErrNotFound) {
+		return &Row{Err: err}
+	}
+
+	if c != "" {
+		xlog.Debug("FindBy key:", xlog.Any("key", key), xlog.Any("val", val), xlog.Any("cache", c))
+		return m.FindBy(c)
+	}
+
+	row := m.SelectOne(WhereEq(key, val), Field(m.primaryKey))
+
+	if row.Err == nil && row.Data != nil {
+		row = m.FindBy(cast.ToString(row.Data[m.primaryKey]))
+		if row.Err != nil {
+			return row
+		}
+		cacheKey := row.GetString(key)
+		err = cache.Set(context.Background(), m.cacheKeyPrefix(cacheKey), row.GetString(m.primaryKey))
+		if err != nil {
+			xlog.Error("set key after FindByKey", xlog.Any("key", cacheKey), xlog.Err(err))
+		} else {
+			xlog.Debug("set key after FindByKey", xlog.Any("key", cacheKey))
+		}
+	}
+
+	return row
 }

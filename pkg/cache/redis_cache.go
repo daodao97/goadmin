@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -28,10 +29,23 @@ func NewRedisCache(options *redis.Options) *RedisCache {
 	}
 }
 
+// NewRedis 创建一个新的 RedisCache 实例
+func NewRedis(client *redis.Client) *RedisCache {
+	// 检查是否能连接到 Redis 服务器
+	_, err := client.Ping(context.Background()).Result()
+	if err != nil {
+		panic("failed to connect to Redis")
+	}
+
+	return &RedisCache{
+		client: client,
+	}
+}
+
 // Get 从 Redis 缓存中获取指定 key 的数据
 func (c *RedisCache) Get(ctx context.Context, key string) (string, error) {
 	val, err := c.client.Get(ctx, key).Result()
-	if err == redis.Nil {
+	if errors.Is(err, redis.Nil) {
 		return "", ErrNotFound
 	} else if err != nil {
 		return "", err

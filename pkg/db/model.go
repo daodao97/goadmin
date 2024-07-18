@@ -1,10 +1,12 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"time"
 
+	"github.com/daodao97/xgo/xlog"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
 
@@ -74,8 +76,9 @@ type Model interface {
 	Delete(opt ...Option) (ok bool, err error)
 	Exec(query string, args ...interface{}) (sql.Result, error)
 	Query(query string, args ...interface{}) (*sql.Rows, error)
-	FindBy(id int64) *Row
-	UpdateBy(id int64, record Record) (bool, error)
+	FindBy(id string) *Row
+	FindByKey(key string, val string) *Row
+	UpdateBy(id string, record Record) (bool, error)
 }
 
 type model struct {
@@ -84,6 +87,7 @@ type model struct {
 	table           string
 	fakeDelKey      string
 	primaryKey      string
+	cacheKey        []string
 	columnHook      map[string]HookData
 	columnValidator []Valid
 	hasOne          []HasOpts
@@ -293,16 +297,12 @@ func (m *model) Update(record Record, opt ...Option) (ok bool, err error) {
 	defer dbLog("Update", time.Now(), &err, &kv)
 
 	_record := record
-	//_record, err := util.DecodeToMap(record, m.saveZero)
-	//if err != nil {
-	//	return false, err
-	//}
 	if len(_record) == 0 {
 		return false, errors.New("empty record to update, if your record is struct please set db tag")
 	}
 
 	if id, ok := _record[m.primaryKey]; ok {
-		kv = append(kv, "id:", id)
+		kv = append(kv, m.primaryKey, id)
 		opt = append(opt, WhereEq(m.primaryKey, id))
 	}
 
@@ -339,6 +339,35 @@ func (m *model) Update(record Record, opt ...Option) (ok bool, err error) {
 	effect, err := result.RowsAffected()
 	if err != nil {
 		return false, err
+	}
+
+	cacheKey := append(m.cacheKey, m.primaryKey)
+	for _, k := range cacheKey {
+		val, ok := HaveFieldInWhere(k, opt...)
+		if ok && cache != nil {
+			// if update primary key, delete old cache
+			if k == m.primaryKey {
+				key := m.cacheKeyPrefix(cast.ToString(val))
+				err = cache.Del(context.Background(), key)
+				if err != nil {
+					xlog.Error("del key after update", xlog.Any(k, val), xlog.Err(err))
+				} else {
+					xlog.Debug("del key after update", xlog.Any(k, val))
+				}
+			} else {
+				// if update other field, delete cache by primary key
+				cachedPk, _ := cache.Get(context.Background(), m.cacheKeyPrefix(cast.ToString(val)))
+				if cachedPk != "" {
+					key := m.cacheKeyPrefix(cachedPk)
+					err = cache.Del(context.Background(), key)
+					if err != nil {
+						xlog.Error("del key after update", xlog.Any(k, val), xlog.Err(err))
+					} else {
+						xlog.Debug("del key after update", xlog.Any(k, val))
+					}
+				}
+			}
+		}
 	}
 
 	return effect >= int64(0), nil

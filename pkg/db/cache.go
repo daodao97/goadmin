@@ -1,13 +1,9 @@
 package db
 
-type Cache interface {
-	Get(key string) (string, error)
-	Del(key string) error
-	Set(key string, data string) error
-}
+import cache2 "github.com/daodao97/goadmin/pkg/cache"
 
-var cache Cache
+var cache cache2.Cache
 
-func SetCache(c Cache) {
+func SetCache(c cache2.Cache) {
 	cache = c
 }
