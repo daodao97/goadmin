@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"time"
 
 	"github.com/daodao97/xgo/xlog"
@@ -16,10 +15,6 @@ import (
 var ErrNotFound = errors.New("record not found")
 
 type Record map[string]interface{}
-
-func (r Record) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r)
-}
 
 func (r Record) Binding(dest interface{}) error {
 	if !util.AllowType(dest, []string{"*struct", "**struct"}) {
